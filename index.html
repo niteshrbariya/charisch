@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+  <meta charset="UTF-8">
+  <title>શાળા ડિજિટલ રજીસ્ટ્રી & શિક્ષક પોર્ટલ</title>
+  <!-- Google Fonts & Font Awesome Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --surface: #ffffff;
+      --bg: #f8fafc;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius: 12px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1);
+    }
+
+    * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', 'Noto Sans Gujarati', sans-serif; }
+    body { background-color: var(--bg); margin: 0; padding: 16px; color: var(--text); }
+
+    /* Top Navbar */
+    .header-bar {
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      padding: 14px 24px;
+      border-radius: var(--radius);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: var(--shadow-md);
+    }
+    .header-title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+    .user-pill {
+      background: rgba(255, 255, 255, 0.18);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .btn-logout {
+      background: #ef4444; border: none; color: white; padding: 5px 12px;
+      border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-logout:hover { background: #dc2626; }
+
+    /* Navigation Tabs */
+    .tab-bar {
+      display: flex; gap: 8px; margin-top: 16px; border-bottom: 2px solid var(--border);
+      overflow-x: auto; padding-bottom: 4px;
+    }
+    .tab-item {
+      padding: 10px 18px; border: none; background: transparent; font-size: 14px;
+      font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 8px 8px 0 0;
+      transition: all 0.2s; white-space: nowrap; display: flex; align-items: center; gap: 8px;
+    }
+    .tab-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #eff6ff; }
+    .badge { background: #ef4444; color: white; border-radius: 20px; padding: 2px 8px; font-size: 11px; }
+
+    /* Main Container Card */
+    .card {
+      background: var(--surface);
+      padding: 24px;
+      border-radius: var(--radius);
+      margin-top: 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Grid & Fields */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .field-label { font-size: 13px; font-weight: 600; margin-bottom: 6px; display: block; color: #334155; }
+    input, select {
+      width: 100%; padding: 10px 14px; border: 1.5px solid var(--border);
+      border-radius: 8px; font-size: 14px; outline: none; transition: 0.2s;
+    }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.1); }
+
+    /* Buttons */
+    .btn {
+      background: var(--primary); color: white; border: none; padding: 10px 20px;
+      border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 6px; transition: 0.2s;
+    }
+    .btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+    /* Login Box */
+    .login-wrapper {
+      max-width: 440px; margin: 60px auto; background: white; padding: 32px;
+      border-radius: 16px; box-shadow: var(--shadow-lg); border: 1px solid var(--border); text-align: center;
+    }
+
+    /* Table Styles */
+    .table-container { overflow-x: auto; margin-top: 14px; border-radius: 8px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+    th { background: #f1f5f9; padding: 12px; font-weight: 600; color: #475569; }
+    td { padding: 10px 12px; border-top: 1px solid var(--border); }
+    tr:hover { background-color: #f8fafc; }
+
+    /* Activity Log Badge */
+    .tag-action {
+      padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; display: inline-block;
+    }
+    .tag-login { background: #e0f2fe; color: #0369a1; }
+    .tag-update { background: #fef3c7; color: #b45309; }
+    .tag-add { background: #dcfce7; color: #15803d; }
+  </style>
+</head>
+<body>
+
+  <!-- ૧. સુરક્ષિત લૉગિન પેનલ (Gmail & Default Password) -->
+  <div id="loginScreen" class="login-wrapper">
+    <div style="font-size: 40px; margin-bottom: 10px;">🏫</div>
+    <h2 style="margin: 0; color: #0f172a; font-size: 22px;">શાળા ડિજિટલ પોર્ટલ</h2>
+    <p style="color: var(--text-muted); font-size: 13px; margin: 8px 0 24px 0;">શિક્ષક / એડમિન સુરક્ષિત લોગિન</p>
+    
+    <div style="text-align: left; margin-bottom: 14px;">
+      <label class="field-label">રજીસ્ટર્ડ Gmail એડ્રેસ:</label>
+      <input type="email" id="login_email" placeholder="example@gmail.com">
+    </div>
+
+    <div style="text-align: left; margin-bottom: 20px;">
+      <label class="field-label">પાસવર્ડ (ડિફોલ્ટ: Chari1234@):</label>
+      <input type="password" id="login_pass" placeholder="••••••••">
+    </div>
+
+    <button class="btn" style="width: 100%; justify-content: center;" id="btnLogin" onclick="handleAuth()">
+      <i class="fa-solid fa-lock"></i> સુરક્ષિત લોગિન કરો
+    </button>
+  </div>
+
+  <!-- ૨. મુખ્ય ડેશબોર્ડ -->
+  <div id="dashboardScreen" style="display: none;">
+    <div class="header-bar">
+      <div class="header-title">
+        <i class="fa-solid fa-graduation-cap"></i> ડિજિટલ શાળા ડેશબોર્ડ
+      </div>
+      <div class="user-badge user-pill">
+        <span><i class="fa-solid fa-user-circle"></i> <strong id="loggedUserName">-</strong> (<span id="loggedUserRole">-</span>)</span>
+        <button class="btn-logout" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</button>
+      </div>
+    </div>
+
+    <!-- નેવિગેશન ટેબ્સ -->
+    <div class="tab-bar">
+      <button class="tab-item active" onclick="showTab('studentsTab')"><i class="fa-solid fa-user-pen"></i> વિદ્યાર્થી ફોર્મ & સુધારો</button>
+      <button class="tab-item" onclick="showTab('listTab')"><i class="fa-solid fa-table-list"></i> સમગ્ર રજીસ્ટ્રી લિસ્ટ</button>
+      <button class="tab-item" id="navApprovals" onclick="showTab('approvalsTab')"><i class="fa-solid fa-bell"></i> બાકી મંજૂરીઓ <span id="apprCount" class="badge" style="display:none;">0</span></button>
+      <button class="tab-item" id="navActivity" onclick="showTab('activityTab')"><i class="fa-solid fa-clock-rotate-left"></i> શિક્ષક કામગીરી રેકોર્ડ (Logs)</button>
+    </div>
+
+    <!-- ટેબ: કામગીરી રેકોર્ડ (Audit Activity Logs) -->
+    <div id="activityTab" class="card tab-content" style="display: none;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
+        <h3 style="margin: 0; color: var(--primary);"><i class="fa-solid fa-list-check"></i> શિક્ષકો દ્વારા કરાયેલ કામગીરીનો ઇતિહાસ</h3>
+        <input type="text" id="logSearch" placeholder="શિક્ષક અથવા કામગીરી શોધો..." onkeyup="filterLogs()" style="max-width: 250px;">
+      </div>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>તારીખ & સમય</th>
+              <th>શિક્ષકનું નામ</th>
+              <th>Gmail એડ્રેસ</th>
+              <th>કામગીરીનો પ્રકાર</th>
+              <th>વિગતે નોંધ (Details)</th>
+            </tr>
+          </thead>
+          <tbody id="logsTableBody">
+            <tr><td colspan="5" style="text-align: center;">લોડ થઈ રહ્યું છે...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ટેબ: વિદ્યાર્થી ફોર્મ અને અન્ય ટેબ્સ (પહેલાં મુજબ જ કાર્યરત) -->
+    <div id="studentsTab" class="card tab-content">
+      <!-- ફોર્મ અને ડ્રોપડાઉન ડેટા અહીં લોડ થશે -->
+      <h3>વિદ્યાર્થી માહિતી સુધારણા</h3>
+      <p style="color: var(--text-muted); font-size: 13px;">શિક્ષક દ્વારા કરેલ તમામ ફેરફારો ઓડિટ લોગમાં આપોઆપ નોંધાશે.</p>
+      <!-- બાકીનું ડાયનેમિક ફોર્મ -->
+      <div id="dynamicFormContainer" class="form-grid"></div>
+    </div>
+  </div>
+
+  <script>
+    var currentEmail = "", currentRole = "", currentName = "";
+    var systemLogs = [];
+
+    function handleAuth() {
+      var email = document.getElementById('login_email').value.trim();
+      var pass = document.getElementById('login_pass').value.trim();
+      var btn = document.getElementById('btnLogin');
+
+      if (!email || !pass) return alert("બંને વિગતો ભરવી ફરજિયાત છે.");
+      btn.innerText = "ચકાસી રહ્યું છે...";
+
+      google.script.run.withSuccessHandler(function(res) {
+        currentEmail = res.email;
+        currentName = res.name;
+        currentRole = res.role;
+
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboardScreen').style.display = 'block';
+        document.getElementById('loggedUserName').innerText = currentName;
+        document.getElementById('loggedUserRole').innerText = currentRole;
+
+        fetchDashboardData();
+      }).withFailureHandler(function(err) {
+        alert("લૉગિન નિષ્ફળ: " + err.message);
+        btn.innerHTML = '<i class="fa-solid fa-lock"></i> સુરક્ષિત લોગિન કરો';
+      }).authenticateUser(email, pass);
+    }
+
+    function fetchDashboardData() {
+      google.script.run.withSuccessHandler(function(data) {
+        systemLogs = data.logs || [];
+        renderLogsTable(systemLogs);
+      }).getRegistryData(currentEmail, currentRole);
+    }
+
+    function renderLogsTable(logs) {
+      var html = "";
+      if (logs.length === 0) {
+        html = "<tr><td colspan='5' style='text-align:center;'>કોઈ કામગીરી નોંધાયેલ નથી.</td></tr>";
+      } else {
+        logs.forEach(l => {
+          var tagClass = l.type.includes("LOGIN") ? "tag-login" : (l.type.includes("UPDATE") ? "tag-update" : "tag-add");
+          html += `<tr>
+            <td>\${l.timestamp}</td>
+            <td><strong>\${l.name}</strong></td>
+            <td>\${l.email}</td>
+            <td><span class="tag-action \${tagClass}">\${l.type}</span></td>
+            <td>\${l.details}</td>
+          </tr>`;
+        });
+      }
+      document.getElementById('logsTableBody').innerHTML = html;
+    }
+
+    function filterLogs() {
+      var term = document.getElementById('logSearch').value.toLowerCase();
+      var filtered = systemLogs.filter(l => 
+        l.name.toLowerCase().includes(term) || 
+        l.email.toLowerCase().includes(term) || 
+        l.details.toLowerCase().includes(term)
+      );
+      renderLogsTable(filtered);
+    }
+
+    function showTab(id) {
+      document.querySelectorAll('.tab-content').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.tab-item').forEach(el => el.classList.remove('active'));
+      document.getElementById(id).style.display = 'block';
+      event.currentTarget.classList.add('active');
+    }
+
+    function logout() {
+      location.reload();
+    }
+  </script>
+</body>
+</html>
