@@ -3,75 +3,56 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>શાળા ડિજિટલ રજીસ્ટ્રી & શિક્ષક પોર્ટલ</title>
+  <title>શાળા ડિજિટલ રજીસ્ટ્રી - ચારી પ્રાથમિક શાળા</title>
   
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Noto+Sans+Gujarati:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <style>
     :root {
-      --primary: #1d4ed8;
-      --primary-hover: #1e40af;
+      --primary: #1e40af;
+      --primary-hover: #1d4ed8;
+      --bg: #f8fafc;
       --surface: #ffffff;
-      --bg: #f1f5f9;
-      --text: #0f172a;
-      --text-muted: #64748b;
       --border: #cbd5e1;
-      --radius: 10px;
+      --text: #0f172a;
+      --radius: 8px;
     }
-
     * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', 'Noto Sans Gujarati', sans-serif; }
-    body { background-color: var(--bg); margin: 0; padding: 14px; color: var(--text); }
+    body { background-color: var(--bg); margin: 0; padding: 12px; color: var(--text); }
 
     .header-bar {
       background: linear-gradient(135deg, #1e3a8a, #2563eb);
-      color: white;
-      padding: 14px 20px;
-      border-radius: var(--radius);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
+      color: white; padding: 12px 18px; border-radius: var(--radius);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;
     }
-    .header-title { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
-    .user-pill {
-      background: rgba(255, 255, 255, 0.2);
-      padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 13px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .btn-logout { background: #ef4444; border: none; color: white; padding: 4px 10px; border-radius: 4px; cursor: pointer; font-size: 12px; }
+    .header-title { font-size: 18px; font-weight: 700; }
+    .btn-logout { background: #ef4444; border: none; color: white; padding: 5px 12px; border-radius: 4px; cursor: pointer; }
 
-    .tab-bar { display: flex; gap: 6px; margin-top: 14px; border-bottom: 2px solid var(--border); overflow-x: auto; }
+    .tab-bar { display: flex; gap: 6px; margin-top: 12px; border-bottom: 2px solid var(--border); overflow-x: auto; }
     .tab-item {
-      padding: 10px 16px; border: none; background: transparent; font-size: 14px;
-      font-weight: 600; color: var(--text-muted); cursor: pointer; border-radius: 6px 6px 0 0;
-      white-space: nowrap; display: flex; align-items: center; gap: 6px;
+      padding: 9px 14px; border: none; background: transparent; font-size: 14px; font-weight: 600;
+      color: #64748b; cursor: pointer; border-radius: 6px 6px 0 0; white-space: nowrap;
     }
-    .tab-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #e0e7ff; }
+    .tab-item.active { color: var(--primary); border-bottom: 3px solid var(--primary); background: #eff6ff; }
 
-    .card { background: var(--surface); padding: 20px; border-radius: var(--radius); margin-top: 14px; border: 1px solid var(--border); }
-    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 14px; }
-    .field-label { font-size: 12px; font-weight: 600; margin-bottom: 4px; display: block; color: #334155; }
-    input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; outline: none; }
-    input:focus, select:focus { border-color: var(--primary); }
+    .card { background: var(--surface); padding: 16px; border-radius: var(--radius); margin-top: 12px; border: 1px solid var(--border); }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; margin-top: 10px; }
+    .field-box { display: flex; flex-direction: column; }
+    .field-label { font-size: 12px; font-weight: 600; margin-bottom: 4px; color: #334155; }
+    input, select { width: 100%; padding: 8px 10px; border: 1px solid var(--border); border-radius: 6px; font-size: 13px; }
 
-    .btn { background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
-    .btn:hover { background: var(--primary-hover); }
+    .btn { background: var(--primary); color: white; border: none; padding: 9px 16px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; }
     .btn-success { background: #16a34a; }
-    .btn-danger { background: #dc2626; }
+    .btn-secondary { background: #64748b; }
 
-    .table-container { overflow-x: auto; margin-top: 12px; }
+    .table-container { overflow-x: auto; margin-top: 12px; max-height: 520px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; white-space: nowrap; }
-    th { background: #f8fafc; padding: 10px; border: 1px solid var(--border); text-align: left; }
-    td { padding: 8px 10px; border: 1px solid var(--border); }
+    th { background: #f1f5f9; padding: 8px 10px; border: 1px solid var(--border); position: sticky; top: 0; }
+    td { padding: 6px 10px; border: 1px solid var(--border); }
     tr:hover { background-color: #f8fafc; }
 
-    .login-wrapper { max-width: 400px; margin: 60px auto; background: white; padding: 28px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
+    .login-wrapper { max-width: 380px; margin: 60px auto; background: white; padding: 26px; border-radius: 12px; border: 1px solid var(--border); text-align: center; }
     #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.7); z-index: 9999; justify-content: center; align-items: center; font-weight: bold; }
   </style>
 </head>
@@ -79,69 +60,60 @@
 
   <div id="loader"><i class="fa-solid fa-spinner fa-spin fa-2x"></i>&nbsp; ડેટા લોડ થઈ રહ્યો છે...</div>
 
-  <!-- ૧. લૉગિન પેનલ -->
+  <!-- લૉગિન પેનલ -->
   <div id="loginScreen" class="login-wrapper">
-    <div style="font-size: 36px; margin-bottom: 8px;">🏫</div>
     <h2 style="margin: 0; color: #1e3a8a;">ચારી પ્રાથમિક શાળા</h2>
-    <p style="color: var(--text-muted); font-size: 13px; margin: 6px 0 20px 0;">શિક્ષક / એડમિન લોગિન</p>
-    
+    <p style="color: #64748b; font-size: 13px; margin: 4px 0 16px 0;">શિક્ષક / એડમિન લોગિન</p>
     <div style="text-align: left; margin-bottom: 12px;">
-      <label class="field-label">Gmail એડ્રેસ:</label>
-      <input type="email" id="login_email" placeholder="teacher@gmail.com">
+      <label class="field-label">Gmail:</label>
+      <input type="email" id="login_email" placeholder="example@gmail.com">
     </div>
-
     <div style="text-align: left; margin-bottom: 16px;">
       <label class="field-label">પાસવર્ડ:</label>
-      <input type="password" id="login_pass" placeholder="••••••••">
-      <small style="color: var(--text-muted); font-size: 11px;">ડિફોલ્ટ: <strong>Chari1234@</strong></small>
+      <input type="password" id="login_pass" placeholder="Chari1234@">
     </div>
-
-    <button class="btn" style="width: 100%; padding: 10px;" onclick="handleLogin()">
-      <i class="fa-solid fa-lock"></i> સુરક્ષિત લોગિન
-    </button>
+    <button class="btn" style="width: 100%;" onclick="handleLogin()">લોગિન કરો</button>
   </div>
 
-  <!-- ૨. મુખ્ય ડેશબોર્ડ -->
+  <!-- ડેશબોર્ડ -->
   <div id="dashboardScreen" style="display: none;">
     <div class="header-bar">
-      <div class="header-title"><i class="fa-solid fa-school"></i> શાળા ડિજિટલ રજીસ્ટ્રી</div>
-      <div class="user-pill">
+      <div class="header-title">🏫 ચારી પ્રાથમિક શાળા - ડિજિટલ રજીસ્ટ્રી</div>
+      <div>
         <span>👤 <strong id="loggedUserName">-</strong> (<span id="loggedUserRole">-</span>)</span>
-        <button class="btn-logout" onclick="logout()">Logout</button>
+        <button class="btn-logout" onclick="logout()" style="margin-left: 10px;">Logout</button>
       </div>
     </div>
 
     <div class="tab-bar">
-      <button class="tab-item active" onclick="showTab('studentsTab')"><i class="fa-solid fa-user-pen"></i> વિદ્યાર્થી ફોર્મ & સુધારો</button>
-      <button class="tab-item" onclick="showTab('listTab')"><i class="fa-solid fa-table-list"></i> રજીસ્ટ્રી લિસ્ટ</button>
-      <button class="tab-item" id="navApprovals" onclick="showTab('approvalsTab')" style="display:none;"><i class="fa-solid fa-bell"></i> બાકી મંજૂરીઓ</button>
-      <button class="tab-item" id="navLogs" onclick="showTab('logsTab')"><i class="fa-solid fa-clock-rotate-left"></i> શિક્ષક કામગીરી રેકોર્ડ</button>
+      <button class="tab-item active" onclick="showTab('studentsTab')">✏️ વિદ્યાર્થી પસંદ / સુધારો</button>
+      <button class="tab-item" onclick="showTab('listTab')">📋 રજીસ્ટ્રી લિસ્ટ (<span id="totalStudentsCount">0</span>)</button>
+      <button class="tab-item" onclick="showTab('logsTab')">🕒 શિક્ષક કામગીરી રેકોર્ડ</button>
     </div>
 
-    <!-- ટેબ ૧: વિદ્યાર્થી ફોર્મ & સુધારો -->
+    <!-- ટેબ ૧: વિદ્યાર્થી સુધારો -->
     <div id="studentsTab" class="card tab-content">
-      <div style="background:#e0f2fe; padding:12px; border-radius:6px; margin-bottom:14px;">
-        <strong style="color:#0284c7;">🎯 વિદ્યાર્થી પસંદ કરો:</strong>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px; margin-top:6px;">
+      <div style="background:#e0f2fe; padding:12px; border-radius:6px; margin-bottom:12px;">
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
           <div>
-            <label class="field-label">ધોરણ:</label>
+            <label class="field-label">૧. ધોરણ પસંદ કરો:</label>
             <select id="selectStd" onchange="onStandardChange()"><option value="">-- ધોરણ --</option></select>
           </div>
           <div>
-            <label class="field-label">વિદ્યાર્થી:</label>
+            <label class="field-label">૨. વિદ્યાર્થીનું નામ પસંદ કરો:</label>
             <select id="selectStudent" onchange="onStudentSelectChange()" disabled><option value="">-- વિદ્યાર્થી --</option></select>
           </div>
         </div>
       </div>
 
-      <h3 id="formTitle" style="color: var(--primary); margin-top: 0;">વિદ્યાર્થી માહિતી ફોર્મ</h3>
+      <h3 id="formTitle" style="color: var(--primary); margin: 0;">વિદ્યાર્થી માહિતી ફોર્મ</h3>
       <input type="hidden" id="editRowIndex">
       <div class="form-grid" id="dynamicFormContainer"></div>
 
       <div style="display: flex; gap: 10px; margin-top: 14px;">
         <button class="btn btn-success" id="btnUpdateStudent" onclick="submitStudentUpdate()" style="display:none;">વિગત સેવ કરો</button>
         <button class="btn" id="btnAddStudent" onclick="submitNewStudent()">+ નવો વિદ્યાર્થી ઉમેરો</button>
-        <button class="btn" id="btnCancelEdit" onclick="cancelStudentEdit()" style="display:none; background:#64748b;">રદ કરો</button>
+        <button class="btn btn-secondary" id="btnCancelEdit" onclick="cancelStudentEdit()" style="display:none;">રદ કરો</button>
       </div>
     </div>
 
@@ -159,15 +131,9 @@
       </div>
     </div>
 
-    <!-- ટેબ ૩: બાકી મંજૂરીઓ -->
-    <div id="approvalsTab" class="card tab-content" style="display: none;">
-      <h3 style="color: #dc2626; margin-top: 0;">શિક્ષકો દ્વારા મોકલેલ મંજૂરીઓ</h3>
-      <div id="approvalsContainer"></div>
-    </div>
-
-    <!-- ટેબ ૪: શિક્ષક કામગીરી રેકોર્ડ -->
+    <!-- ટેબ ૩: શિક્ષક કામગીરી રેકોર્ડ -->
     <div id="logsTab" class="card tab-content" style="display: none;">
-      <h3 style="margin-top: 0; color: var(--primary);">કામગીરીનો ઇતિહાસ (Audit Logs)</h3>
+      <h3 style="margin-top:0; color:var(--primary);">શિક્ષકો દ્વારા થયેલી કામગીરી (Audit Log)</h3>
       <div class="table-container">
         <table>
           <thead><tr><th>તારીખ/સમય</th><th>શિક્ષક</th><th>Gmail</th><th>પ્રકાર</th><th>વિગત</th></tr></thead>
@@ -187,79 +153,78 @@
     let globalHeaders = [];
     let allStudents = [];
     let allLogs = [];
-    let stdColIdx = -1;
-    let nameColIdx = -1;
+    let stdColIdx = 1;   // "ધોરણ" કોલમ
+    let nameColIdx = 4;  // "વિદ્યાર્થીનું નામ" કોલમ
 
     function showLoader(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
-
-    async function callApi(action, payload = {}) {
-      showLoader(true);
-      try {
-        const res = await fetch(SCRIPT_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: action, ...payload })
-        });
-        const data = await res.json();
-        showLoader(false);
-        return data;
-      } catch (e) {
-        showLoader(false);
-        alert("કનેક્શન એરર: " + e.message);
-        return null;
-      }
-    }
 
     async function handleLogin() {
       const email = document.getElementById('login_email').value.trim();
       const pass = document.getElementById('login_pass').value.trim();
 
-      const res = await callApi("authenticateUser", { email: email, password: pass });
-      if (res && res.success) {
-        currentUserEmail = res.email;
-        currentUserName = res.name;
-        currentUserRole = res.role;
+      if (!email || !pass) { alert("Gmail અને પાસવર્ડ દાખલ કરો."); return; }
 
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('dashboardScreen').style.display = 'block';
-        document.getElementById('loggedUserName').innerText = currentUserName;
-        document.getElementById('loggedUserRole').innerText = currentUserRole;
+      showLoader(true);
+      try {
+        // GET પદ્ધતિથી કોલ જેથી CORS એરર ન આવે
+        const res = await fetch(`${SCRIPT_URL}?action=authenticateUser&email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}`);
+        const data = await res.json();
+        showLoader(false);
 
-        if (currentUserRole === "Admin") {
-          document.getElementById('navApprovals').style.display = 'inline-flex';
-          document.getElementById('btnUpdateStudent').innerText = "સીધું સેવ કરો (Admin)";
+        if (data && data.success) {
+          currentUserEmail = data.email;
+          currentUserName = data.name;
+          currentUserRole = data.role;
+
+          document.getElementById('loginScreen').style.display = 'none';
+          document.getElementById('dashboardScreen').style.display = 'block';
+          document.getElementById('loggedUserName').innerText = currentUserName;
+          document.getElementById('loggedUserRole').innerText = currentUserRole;
+
+          loadSheetData();
         } else {
-          document.getElementById('btnUpdateStudent').innerText = "મંજૂરી માટે મોકલો";
+          alert(data.error || "ખોટી વિગત!");
         }
-        loadData();
-      } else {
-        alert(res ? res.error : "લોગિન નિષ્ફળ!");
+      } catch (err) {
+        showLoader(false);
+        alert("સર્વર કનેક્શનમાં ભૂલ આવી: " + err.message);
       }
     }
 
-    async function loadData() {
-      const data = await callApi("getRegistryData", { userEmail: currentUserEmail, userRole: currentUserRole });
-      if (!data) return;
+    async function loadSheetData() {
+      showLoader(true);
+      try {
+        const res = await fetch(`${SCRIPT_URL}?action=getRegistryData&userEmail=${encodeURIComponent(currentUserEmail)}&userRole=${encodeURIComponent(currentUserRole)}`);
+        const data = await res.json();
+        showLoader(false);
 
-      globalHeaders = data.headers;
-      allStudents = data.students;
-      allLogs = data.logs;
+        if (!data || !data.headers) return;
 
-      stdColIdx = globalHeaders.findIndex(h => h.includes("ધોરણ"));
-      nameColIdx = globalHeaders.findIndex(h => h.includes("નામ"));
+        globalHeaders = data.headers;
+        allStudents = data.students || [];
+        allLogs = data.logs || [];
 
-      buildForm();
-      buildTableHeaders();
-      populateStdDropdowns();
-      renderStudents(allStudents);
-      renderLogs();
-      if (currentUserRole === "Admin") renderApprovals(data.approvals);
+        // કોલમ ઇન્ડેક્સ ઓળખવા
+        stdColIdx = globalHeaders.findIndex(h => h.includes("ધોરણ"));
+        nameColIdx = globalHeaders.findIndex(h => h.includes("વિદ્યાર્થીનું નામ") && !h.includes("English"));
+
+        document.getElementById('totalStudentsCount').innerText = allStudents.length;
+
+        buildForm();
+        buildTableHeaders();
+        populateStdDropdowns();
+        renderStudents(allStudents);
+        renderLogs();
+      } catch (err) {
+        showLoader(false);
+        alert("ડેટા લોડ કરવામાં ભૂલ: " + err.message);
+      }
     }
 
     function buildForm() {
       let html = "";
       globalHeaders.forEach((h, idx) => {
-        if (h.includes("ફોટો") || h.includes("આધાર કાર્ડ (") || h.includes("પાસબુક")) return;
+        if (h.includes("ફોટો") || h.includes("આધાર કાર્ડ (") || h.includes("પાસબુક") || h.includes("જાતિ અંગે")) return;
         html += `<div class="field-box"><label class="field-label">${h}</label><input type="text" id="col_input_${idx}" placeholder="${h}"></div>`;
       });
       document.getElementById('dynamicFormContainer').innerHTML = html;
@@ -273,11 +238,16 @@
 
     function populateStdDropdowns() {
       let stdSet = new Set();
-      allStudents.forEach(s => { if (s.values[stdColIdx]) stdSet.add(s.values[stdColIdx]); });
+      allStudents.forEach(s => {
+        let val = s.values[stdColIdx];
+        if (val) stdSet.add(val.toString().trim());
+      });
+
       let sSelect = document.getElementById('selectStd');
       let fSelect = document.getElementById('filterListStd');
-      sSelect.innerHTML = '<option value="">-- ધોરણ --</option>';
+      sSelect.innerHTML = '<option value="">-- ધોરણ પસંદ કરો --</option>';
       fSelect.innerHTML = '<option value="All">તમામ ધોરણ</option>';
+
       stdSet.forEach(val => {
         sSelect.innerHTML += `<option value="${val}">${val}</option>`;
         fSelect.innerHTML += `<option value="${val}">${val}</option>`;
@@ -287,12 +257,14 @@
     function onStandardChange() {
       const val = document.getElementById('selectStd').value;
       const stSelect = document.getElementById('selectStudent');
-      stSelect.innerHTML = '<option value="">-- વિદ્યાર્થી --</option>';
+      stSelect.innerHTML = '<option value="">-- વિદ્યાર્થી પસંદ કરો --</option>';
+
       if (!val) { stSelect.disabled = true; return; }
 
       const filtered = allStudents.filter(s => s.values[stdColIdx] === val);
       filtered.forEach(s => {
-        stSelect.innerHTML += `<option value="${s.rowIndex}">${s.values[nameColIdx]}</option>`;
+        const sName = s.values[nameColIdx] || ("રોલ " + s.values[2]);
+        stSelect.innerHTML += `<option value="${s.rowIndex}">${sName}</option>`;
       });
       stSelect.disabled = false;
     }
@@ -335,17 +307,24 @@
         return el ? el.value.trim() : "";
       });
 
-      const res = await callApi("updateStudentRow", {
-        rowIndex: rowIndex,
-        newValues: rowValues,
-        userEmail: currentUserEmail,
-        userName: currentUserName,
-        userRole: currentUserRole
+      showLoader(true);
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "updateStudentRow",
+          rowIndex: rowIndex,
+          newValues: rowValues,
+          userEmail: currentUserEmail,
+          userName: currentUserName,
+          userRole: currentUserRole
+        })
       });
+      showLoader(false);
 
-      alert(res.message);
+      alert("માહિતી સફળતાપૂર્વક સુધારી લેવાઈ છે!");
       cancelStudentEdit();
-      loadData();
+      loadSheetData();
     }
 
     async function submitNewStudent() {
@@ -354,16 +333,23 @@
         return el ? el.value.trim() : "";
       });
 
-      const res = await callApi("addStudentRow", {
-        newValues: rowValues,
-        userEmail: currentUserEmail,
-        userName: currentUserName,
-        userRole: currentUserRole
+      showLoader(true);
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify({
+          action: "addStudentRow",
+          newValues: rowValues,
+          userEmail: currentUserEmail,
+          userName: currentUserName,
+          userRole: currentUserRole
+        })
       });
+      showLoader(false);
 
-      alert(res.message);
+      alert("નવો વિદ્યાર્થી ઉમેરાઈ ગયો!");
       cancelStudentEdit();
-      loadData();
+      loadSheetData();
     }
 
     function renderStudents(list) {
@@ -382,34 +368,6 @@
         html += `<tr><td>${l.timestamp}</td><td><strong>${l.name}</strong></td><td>${l.email}</td><td>${l.type}</td><td>${l.details}</td></tr>`;
       });
       document.getElementById('logsTableBody').innerHTML = html || "<tr><td colspan='5'>કોઈ રેકોર્ડ નથી.</td></tr>";
-    }
-
-    function renderApprovals(approvals) {
-      let c = document.getElementById('approvalsContainer');
-      if (!approvals || approvals.length === 0) { c.innerHTML = "<p>કોઈ મંજૂરી બાકી નથી.</p>"; return; }
-      let html = "";
-      approvals.forEach(a => {
-        html += `<div style="border:1px solid #ccc; padding:10px; margin-bottom:8px; border-radius:6px;">
-          <span><strong>શિક્ષક:</strong> ${a.requestedBy} (${a.requestTime})</span>
-          <div style="margin-top:6px;">
-            <button class="btn btn-success" onclick="actionApprove(${a.id})">✓ મંજૂર</button>
-            <button class="btn btn-danger" onclick="actionReject(${a.id})">✕ નામંજૂર</button>
-          </div>
-        </div>`;
-      });
-      c.innerHTML = html;
-    }
-
-    async function actionApprove(id) {
-      const res = await callApi("approveRequest", { id: id, userEmail: currentUserEmail, userName: currentUserName });
-      alert(res.message);
-      loadData();
-    }
-
-    async function actionReject(id) {
-      const res = await callApi("rejectRequest", { id: id, userEmail: currentUserEmail, userName: currentUserName });
-      alert(res.message);
-      loadData();
     }
 
     function applyListFilter() {
