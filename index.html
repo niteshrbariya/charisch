@@ -58,7 +58,7 @@
 </head>
 <body>
 
-  <div id="loader"><i class="fa-solid fa-spinner fa-spin fa-2x"></i>&nbsp; ડેટા લોડ થઈ રહ્યો છે...</div>
+  <div id="loader"><i class="fa-solid fa-spinner fa-spin fa-2x"></i>&nbsp; વિગતો લોડ થઈ રહી છે...</div>
 
   <!-- લૉગિન પેનલ -->
   <div id="loginScreen" class="login-wrapper">
@@ -113,7 +113,7 @@
       <div style="display: flex; gap: 10px; margin-top: 14px;">
         <button class="btn btn-success" id="btnUpdateStudent" onclick="submitStudentUpdate()" style="display:none;">વિગત સેવ કરો</button>
         <button class="btn" id="btnAddStudent" onclick="submitNewStudent()">+ નવો વિદ્યાર્થી ઉમેરો</button>
-        <button class="btn btn-secondary" id="btnCancelEdit" onclick="cancelStudentEdit()" style="display:none;">રદ કરો</button>
+        <button class="btn" id="btnCancelEdit" onclick="cancelStudentEdit()" style="display:none; background:#64748b;">રદ કરો</button>
       </div>
     </div>
 
@@ -153,10 +153,42 @@
     let globalHeaders = [];
     let allStudents = [];
     let allLogs = [];
-    let stdColIdx = 1;   // "ધોરણ" કોલમ
-    let nameColIdx = 4;  // "વિદ્યાર્થીનું નામ" કોલમ
+    let stdColIdx = 1;
+    let nameColIdx = 4;
 
     function showLoader(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
+
+    // JSONP કોલ હેલ્પર (Zero Network/CORS Error)
+    function callJsonp(params) {
+      return new Promise((resolve, reject) => {
+        showLoader(true);
+        const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
+        params.callback = callbackName;
+
+        const query = Object.keys(params)
+          .map(k => encodeURIComponent(k) + '=' + encodeURIComponent(params[k]))
+          .join('&');
+
+        const script = document.createElement('script');
+        script.src = SCRIPT_URL + '?' + query;
+
+        window[callbackName] = function(data) {
+          delete window[callbackName];
+          document.body.removeChild(script);
+          showLoader(false);
+          resolve(data);
+        };
+
+        script.onerror = function() {
+          delete window[callbackName];
+          document.body.removeChild(script);
+          showLoader(false);
+          reject(new Error("સર્વર સાથે કનેક્ટ થઈ શક્યું નથી."));
+        };
+
+        document.body.appendChild(script);
+      });
+    }
 
     async function handleLogin() {
       const email = document.getElementById('login_email').value.trim();
@@ -164,12 +196,12 @@
 
       if (!email || !pass) { alert("Gmail અને પાસવર્ડ દાખલ કરો."); return; }
 
-      showLoader(true);
       try {
-        // GET પદ્ધતિથી કોલ જેથી CORS એરર ન આવે
-        const res = await fetch(`${SCRIPT_URL}?action=authenticateUser&email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}`);
-        const data = await res.json();
-        showLoader(false);
+        const data = await callJsonp({
+          action: "authenticateUser",
+          email: email,
+          password: pass
+        });
 
         if (data && data.success) {
           currentUserEmail = data.email;
@@ -183,20 +215,20 @@
 
           loadSheetData();
         } else {
-          alert(data.error || "ખોટી વિગત!");
+          alert(data ? data.error : "ખોટી વિગતો દાખલ કરી છે.");
         }
       } catch (err) {
-        showLoader(false);
-        alert("સર્વર કનેક્શનમાં ભૂલ આવી: " + err.message);
+        alert(err.message);
       }
     }
 
     async function loadSheetData() {
-      showLoader(true);
       try {
-        const res = await fetch(`${SCRIPT_URL}?action=getRegistryData&userEmail=${encodeURIComponent(currentUserEmail)}&userRole=${encodeURIComponent(currentUserRole)}`);
-        const data = await res.json();
-        showLoader(false);
+        const data = await callJsonp({
+          action: "getRegistryData",
+          userEmail: currentUserEmail,
+          userRole: currentUserRole
+        });
 
         if (!data || !data.headers) return;
 
@@ -204,7 +236,6 @@
         allStudents = data.students || [];
         allLogs = data.logs || [];
 
-        // કોલમ ઇન્ડેક્સ ઓળખવા
         stdColIdx = globalHeaders.findIndex(h => h.includes("ધોરણ"));
         nameColIdx = globalHeaders.findIndex(h => h.includes("વિદ્યાર્થીનું નામ") && !h.includes("English"));
 
@@ -216,8 +247,7 @@
         renderStudents(allStudents);
         renderLogs();
       } catch (err) {
-        showLoader(false);
-        alert("ડેટા લોડ કરવામાં ભૂલ: " + err.message);
+        alert("ડેટા લોડ કરવામાં ભૂલ આવી: " + err.message);
       }
     }
 
@@ -245,7 +275,7 @@
 
       let sSelect = document.getElementById('selectStd');
       let fSelect = document.getElementById('filterListStd');
-      sSelect.innerHTML = '<option value="">-- ધોરણ પસંદ કરો --</option>';
+      sSelect.innerHTML = '<option value="">-- ધોરણ --</option>';
       fSelect.innerHTML = '<option value="All">તમામ ધોરણ</option>';
 
       stdSet.forEach(val => {
@@ -257,7 +287,7 @@
     function onStandardChange() {
       const val = document.getElementById('selectStd').value;
       const stSelect = document.getElementById('selectStudent');
-      stSelect.innerHTML = '<option value="">-- વિદ્યાર્થી પસંદ કરો --</option>';
+      stSelect.innerHTML = '<option value="">-- વિદ્યાર્થી --</option>';
 
       if (!val) { stSelect.disabled = true; return; }
 
@@ -307,22 +337,15 @@
         return el ? el.value.trim() : "";
       });
 
-      showLoader(true);
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "updateStudentRow",
-          rowIndex: rowIndex,
-          newValues: rowValues,
-          userEmail: currentUserEmail,
-          userName: currentUserName,
-          userRole: currentUserRole
-        })
+      const res = await callJsonp({
+        action: "updateStudentRow",
+        rowIndex: rowIndex,
+        newValues: JSON.stringify(rowValues),
+        userEmail: currentUserEmail,
+        userName: currentUserName
       });
-      showLoader(false);
 
-      alert("માહિતી સફળતાપૂર્વક સુધારી લેવાઈ છે!");
+      alert(res.message);
       cancelStudentEdit();
       loadSheetData();
     }
@@ -333,21 +356,14 @@
         return el ? el.value.trim() : "";
       });
 
-      showLoader(true);
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify({
-          action: "addStudentRow",
-          newValues: rowValues,
-          userEmail: currentUserEmail,
-          userName: currentUserName,
-          userRole: currentUserRole
-        })
+      const res = await callJsonp({
+        action: "addStudentRow",
+        newValues: JSON.stringify(rowValues),
+        userEmail: currentUserEmail,
+        userName: currentUserName
       });
-      showLoader(false);
 
-      alert("નવો વિદ્યાર્થી ઉમેરાઈ ગયો!");
+      alert(res.message);
       cancelStudentEdit();
       loadSheetData();
     }
