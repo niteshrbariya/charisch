@@ -11,7 +11,6 @@
   <style>
     :root {
       --primary: #1e40af;
-      --primary-hover: #1d4ed8;
       --bg: #f8fafc;
       --surface: #ffffff;
       --border: #cbd5e1;
@@ -60,7 +59,6 @@
 
   <div id="loader"><i class="fa-solid fa-spinner fa-spin fa-2x"></i>&nbsp; વિગતો લોડ થઈ રહી છે...</div>
 
-  <!-- લૉગિન પેનલ -->
   <div id="loginScreen" class="login-wrapper">
     <h2 style="margin: 0; color: #1e3a8a;">ચારી પ્રાથમિક શાળા</h2>
     <p style="color: #64748b; font-size: 13px; margin: 4px 0 16px 0;">શિક્ષક / એડમિન લોગિન</p>
@@ -75,7 +73,6 @@
     <button class="btn" style="width: 100%;" onclick="handleLogin()">લોગિન કરો</button>
   </div>
 
-  <!-- ડેશબોર્ડ -->
   <div id="dashboardScreen" style="display: none;">
     <div class="header-bar">
       <div class="header-title">🏫 ચારી પ્રાથમિક શાળા - ડિજિટલ રજીસ્ટ્રી</div>
@@ -91,7 +88,6 @@
       <button class="tab-item" onclick="showTab('logsTab')">🕒 શિક્ષક કામગીરી રેકોર્ડ</button>
     </div>
 
-    <!-- ટેબ ૧: વિદ્યાર્થી સુધારો -->
     <div id="studentsTab" class="card tab-content">
       <div style="background:#e0f2fe; padding:12px; border-radius:6px; margin-bottom:12px;">
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
@@ -113,11 +109,10 @@
       <div style="display: flex; gap: 10px; margin-top: 14px;">
         <button class="btn btn-success" id="btnUpdateStudent" onclick="submitStudentUpdate()" style="display:none;">વિગત સેવ કરો</button>
         <button class="btn" id="btnAddStudent" onclick="submitNewStudent()">+ નવો વિદ્યાર્થી ઉમેરો</button>
-        <button class="btn" id="btnCancelEdit" onclick="cancelStudentEdit()" style="display:none; background:#64748b;">રદ કરો</button>
+        <button class="btn btn-secondary" id="btnCancelEdit" onclick="cancelStudentEdit()" style="display:none;">રદ કરો</button>
       </div>
     </div>
 
-    <!-- ટેબ ૨: રજીસ્ટ્રી લિસ્ટ -->
     <div id="listTab" class="card tab-content" style="display: none;">
       <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-bottom:10px;">
         <select id="filterListStd" onchange="applyListFilter()" style="max-width:140px;"><option value="All">તમામ ધોરણ</option></select>
@@ -131,7 +126,6 @@
       </div>
     </div>
 
-    <!-- ટેબ ૩: શિક્ષક કામગીરી રેકોર્ડ -->
     <div id="logsTab" class="card tab-content" style="display: none;">
       <h3 style="margin-top:0; color:var(--primary);">શિક્ષકો દ્વારા થયેલી કામગીરી (Audit Log)</h3>
       <div class="table-container">
@@ -144,7 +138,7 @@
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxw2eYxdnI_S9QQU50yaBUWwBEq1vQgTxNBMml8M59JIPtFO5FK7hjzktzZcqa09SanKQ/exec";
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw_RvBS8rP4wGs1J9-jYQMl0zM4ar3QnpBn0yR2za42Bxkf1tIhZ2cnU_4tcJvFO4ki/exec";
 
     let currentUserEmail = "";
     let currentUserName = "";
@@ -158,9 +152,8 @@
 
     function showLoader(s) { document.getElementById('loader').style.display = s ? 'flex' : 'none'; }
 
-    // JSONP કોલ હેલ્પર (Zero Network/CORS Error)
     function callJsonp(params) {
-      return new Promise((resolve, reject) => {
+      return new Promise((resolve) => {
         showLoader(true);
         const callbackName = 'jsonp_cb_' + Math.round(100000 * Math.random());
         params.callback = callbackName;
@@ -172,18 +165,27 @@
         const script = document.createElement('script');
         script.src = SCRIPT_URL + '?' + query;
 
+        const timeout = setTimeout(() => {
+          showLoader(false);
+          alert("સર્વર પ્રતિસાદ આપતું નથી. કૃપા કરીને ખાતરી કરો કે Deploy સેટિંગમાં 'Who has access: Anyone' પસંદ કરેલ છે.");
+          resolve(null);
+        }, 12000);
+
         window[callbackName] = function(data) {
+          clearTimeout(timeout);
           delete window[callbackName];
-          document.body.removeChild(script);
+          if (script.parentNode) script.parentNode.removeChild(script);
           showLoader(false);
           resolve(data);
         };
 
         script.onerror = function() {
+          clearTimeout(timeout);
           delete window[callbackName];
-          document.body.removeChild(script);
+          if (script.parentNode) script.parentNode.removeChild(script);
           showLoader(false);
-          reject(new Error("સર્વર સાથે કનેક્ટ થઈ શક્યું નથી."));
+          alert("સર્વર કનેક્શનમાં ભૂલ આવી. ખાતરી કરો કે Apps Script માં 'Anyone' સિલેક્ટ કરેલ છે.");
+          resolve(null);
         };
 
         document.body.appendChild(script);
@@ -196,59 +198,51 @@
 
       if (!email || !pass) { alert("Gmail અને પાસવર્ડ દાખલ કરો."); return; }
 
-      try {
-        const data = await callJsonp({
-          action: "authenticateUser",
-          email: email,
-          password: pass
-        });
+      const data = await callJsonp({
+        action: "authenticateUser",
+        email: email,
+        password: pass
+      });
 
-        if (data && data.success) {
-          currentUserEmail = data.email;
-          currentUserName = data.name;
-          currentUserRole = data.role;
+      if (data && data.success) {
+        currentUserEmail = data.email;
+        currentUserName = data.name;
+        currentUserRole = data.role;
 
-          document.getElementById('loginScreen').style.display = 'none';
-          document.getElementById('dashboardScreen').style.display = 'block';
-          document.getElementById('loggedUserName').innerText = currentUserName;
-          document.getElementById('loggedUserRole').innerText = currentUserRole;
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('dashboardScreen').style.display = 'block';
+        document.getElementById('loggedUserName').innerText = currentUserName;
+        document.getElementById('loggedUserRole').innerText = currentUserRole;
 
-          loadSheetData();
-        } else {
-          alert(data ? data.error : "ખોટી વિગતો દાખલ કરી છે.");
-        }
-      } catch (err) {
-        alert(err.message);
+        loadSheetData();
+      } else if (data) {
+        alert(data.error || "ખોટી વિગતો દાખલ કરી છે.");
       }
     }
 
     async function loadSheetData() {
-      try {
-        const data = await callJsonp({
-          action: "getRegistryData",
-          userEmail: currentUserEmail,
-          userRole: currentUserRole
-        });
+      const data = await callJsonp({
+        action: "getRegistryData",
+        userEmail: currentUserEmail,
+        userRole: currentUserRole
+      });
 
-        if (!data || !data.headers) return;
+      if (!data || !data.headers) return;
 
-        globalHeaders = data.headers;
-        allStudents = data.students || [];
-        allLogs = data.logs || [];
+      globalHeaders = data.headers;
+      allStudents = data.students || [];
+      allLogs = data.logs || [];
 
-        stdColIdx = globalHeaders.findIndex(h => h.includes("ધોરણ"));
-        nameColIdx = globalHeaders.findIndex(h => h.includes("વિદ્યાર્થીનું નામ") && !h.includes("English"));
+      stdColIdx = globalHeaders.findIndex(h => h.includes("ધોરણ"));
+      nameColIdx = globalHeaders.findIndex(h => h.includes("વિદ્યાર્થીનું નામ") && !h.includes("English"));
 
-        document.getElementById('totalStudentsCount').innerText = allStudents.length;
+      document.getElementById('totalStudentsCount').innerText = allStudents.length;
 
-        buildForm();
-        buildTableHeaders();
-        populateStdDropdowns();
-        renderStudents(allStudents);
-        renderLogs();
-      } catch (err) {
-        alert("ડેટા લોડ કરવામાં ભૂલ આવી: " + err.message);
-      }
+      buildForm();
+      buildTableHeaders();
+      populateStdDropdowns();
+      renderStudents(allStudents);
+      renderLogs();
     }
 
     function buildForm() {
@@ -345,7 +339,7 @@
         userName: currentUserName
       });
 
-      alert(res.message);
+      if (res) alert(res.message);
       cancelStudentEdit();
       loadSheetData();
     }
@@ -363,7 +357,7 @@
         userName: currentUserName
       });
 
-      alert(res.message);
+      if (res) alert(res.message);
       cancelStudentEdit();
       loadSheetData();
     }
